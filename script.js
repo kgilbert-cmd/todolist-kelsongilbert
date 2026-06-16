@@ -1,14 +1,8 @@
-/**
- * Focus To-Do Application - Pure Reminders & Task Management Logic
- */
-
-// ==========================================================================
 // Application State & Constants
-// ==========================================================================
 let tasks = [];
 let currentFilter = 'all';
 let currentSort = 'latest';
-let userEmail = 'kelson.gilbert@gmail.com'; 
+let userEmail = 'enteryouremailhere@gmail.com'; 
 
 // DOM Elements
 const taskForm = document.getElementById('task-form');
@@ -25,9 +19,7 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 const toastContainer = document.getElementById('toast-container');
 const emailDisplay = document.getElementById('user-email');
 
-// ==========================================================================
 // Initialisation
-// ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
   loadTasksFromLocalStorage();
   loadEmailFromLocalStorage();
@@ -71,9 +63,7 @@ function renderEmailDisplay() {
   }
 }
 
-// ==========================================================================
 // Event Listeners Setup
-// ==========================================================================
 function setupEventListeners() {
   taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -109,9 +99,7 @@ function setupEventListeners() {
   if (emailDisplay) emailDisplay.addEventListener('click', changeEmail);
 }
 
-// ==========================================================================
-// Logika Sistem Lonceng & Simulasi Konten Email Panjang
-// ==========================================================================
+// Logika Sistem Lonceng Otomatis Nyata via EmailJS
 function toggleReminder(taskId) {
   tasks = tasks.map(task => {
     if (task.id === taskId) {
@@ -122,10 +110,12 @@ function toggleReminder(taskId) {
           showToast('⚠️ Set tanggal & jam dulu sebelum mengaktifkan lonceng!', 'danger');
           return task;
         }
-        showToast(`🔔 Reminder Aktif! Skenario email dikirim ke ${userEmail}`, 'success');
-        simulasikanKontenEmailPanjang(task);
+        
+        // Membuat objek tracker agar sistem tahu email mana saja yang sudah dikirim (mencegah spam berulang)
+        task.emailsSent = { h1: false, h2h: false, m15: false };
+        showToast(`🔔 Pengingat Otomatis Aktif! Menunggu jadwal pengiriman ke ${userEmail}`, 'success');
       } else {
-        showToast('🔕 Pengingat dimatikan.', 'info');
+        showToast('🔕 Pengingat otomatis dimatikan.', 'info');
       }
       return { ...task, reminderActive: currentStatus };
     }
@@ -136,63 +126,75 @@ function toggleReminder(taskId) {
   renderTasks();
 }
 
-function simulasikanKontenEmailPanjang(task) {
-  const batasWaktu = `${task.dueDate} pukul ${task.dueTime}`;
+// ENGINE DETEKSI WAKTU (Mengecek H-1 Hari, H-2 Jam, dan H-15 Menit secara Riil)
+function cekJadwalPengingatOtomatis() {
+  const sekarang = new Date();
 
-  console.log(`\n======================================================================`);
-  console.log(`[MAIL SYSTEM LOG] Antrean pengiriman email dibuat untuk: ${userEmail}`);
-  console.log(`======================================================================\n`);
+  tasks = tasks.map(task => {
+    // Jalankan pengecekan jika lonceng aktif, tugas belum selesai, dan data waktu lengkap
+    if (task.reminderActive && !task.completed && task.dueDate && task.dueTime) {
+      
+      const waktuTarget = new Date(`${task.dueDate}T${task.dueTime}`);
+      const selisihMilidetik = waktuTarget - sekarang;
+      const selisihMenit = Math.floor(selisihMilidetik / (1000 * 60));
 
-  // EMAIL 1: H-1 HARI
-  console.log(`📬 [SUBJECT]: H-1 Reminder: ${task.text}`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(`Selamat pagi Kelson Gilbert,
+      // Inisialisasi objek tracker jika belum terdefinisi secara aman
+      if (!task.emailsSent) {
+        task.emailsSent = { h1: false, h2h: false, m15: false };
+      }
 
-Ini adalah email pengingat otomatis dari asisten produktivitas Focus To-Do milikmu. 
+      // 1. ATURAN H-1 HARI (Dikirim jika waktu tersisa berada di rentang 23 hingga 24 jam)
+      if (selisihMenit <= 1440 && selisihMenit > 1380 && !task.emailsSent.h1) {
+        task.emailsSent.h1 = true;
+        kirimEmailPengingatNyata(task, "H-1 Hari");
+      }
+      
+      // 2. ATURAN H-2 JAM (Dikirim jika waktu tersisa berada di rentang 110 hingga 120 menit)
+      else if (selisihMenit <= 120 && selisihMenit > 110 && !task.emailsSent.h2h) {
+        task.emailsSent.h2h = true;
+        kirimEmailPengingatNyata(task, "H-2 Jam");
+      }
+      
+      // 3. ATURAN H-15 MENIT (Dikirim jika waktu tersisa di bawah 15 menit dan belum lewat batas)
+      else if (selisihMenit <= 15 && selisihMenit > 0 && !task.emailsSent.m15) {
+        task.emailsSent.m15 = true;
+        kirimEmailPengingatNyata(task, "H-15 Menit [URGENT]");
+      }
+    }
+    return task;
+  });
 
-Kami ingin memberikan info penting bahwa besok kamu memiliki sebuah agenda/tugas yang harus segera diselesaikan, yaitu mengeksekusi materi tentang:
-👉 "${task.text}"
-
-Jadwal batas waktu pelaksanaan jatuh pada tanggal ${batasWaktu}. Karena sisa waktu pengerjaan masih tersisa 1 Hari penuh, ini adalah momen emas paling tepat untuk mencicil bagian-bagian materi dasar, mengumpulkan referensi penting, atau mulai menyusun kerangka tugas agar besok hari kamu tidak perlu panik terburu-buru.
-
-Salam hangat,
-Focus Task Assistant`);
-  console.log(`----------------------------------------------------------------------\n`);
-
-  // EMAIL 2: H-2 JAM
-  console.log(`📬 [SUBJECT]: H-2 Jam Menuju Batas Tugas: ${task.text}`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(`Halo Kelson Gilbert,
-
-Waktu berjalan dengan sangat cepat! Email pengingat ini hadir karena dalam waktu 2 Jam ke depan, tugas penting kamu akan segera mencapai tenggat waktu:
-👉 "${task.text}"
-
-Saat ini sisa waktu yang kamu miliki hanya tersisa kurang lebih 2 jam sebelum waktu menunjukkan pukul ${task.dueTime}. Yuk, mari segera rapikan meja belajarmu, matikan notifikasi sosial media ataupun game di HP kamu untuk sementara, dan bersiaplah masuk ke dalam mode kerja fokus penuh (*deep work*).
-
-Salam produktif,
-Focus Task Assistant`);
-  console.log(`----------------------------------------------------------------------\n`);
-
-  // EMAIL 3: H-15 MENIT
-  console.log(`📬 [SUBJECT]: H-15 Menit [URGENT FINAL CALL]: ${task.text}`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(`PERINGATAN DARURAT, Kelson Gilbert!
-
-Ini adalah alarm pengingat terakhir sekaligus paling krusial dari asisten pribadimu. Waktu pengerjaan kamu benar-benar sudah di ujung tanduk!
-
-Tugas utama kamu:
-👉 "${task.text}"
-
-Waktu tersisa yang kamu punya saat ini hanya tinggal 15 Menit saja sebelum jam target menyentuh pukul ${task.dueTime}! Jika tugas ini merupakan materi ujian atau pengumpulan dokumen penting, segera lakukan pengecekan akhir (*final check*) pada berkas kamu sekarang juga sebelum sistem ditutup.
-
-Salam perjuangan terakhir,
-Focus Task Assistant`);
-  console.log(`======================================================================\n`);
+  // Sinkronisasi status tracker ke LocalStorage agar tidak reset saat browser di-refresh
+  saveTasksToLocalStorage();
 }
 
-// ==========================================================================
+// Menjalankan pengecekan otomatis setiap 60 detik (1 menit)
+setInterval(cekJadwalPengingatOtomatis, 60000);
+
+// FUNGSI UTAMA MENEMBAK API EMAILJS KELSON GILBERT
+function kirimEmailPengingatNyata(task, labelWaktu) {
+  const batasWaktu = `${formatReadableDate(task.dueDate, task.dueTime)}`;
+
+  // Menambahkan informasi rentang waktu secara dinamis pada parameter judul tugas
+  const templateParams = {
+    task_title: `${task.text} (${labelWaktu})`,
+    task_deadline: batasWaktu,
+    to_email: userEmail
+  };
+
+  console.log(`[MAIL SYSTEM LOG] Otomatisasi terpicu [${labelWaktu}] untuk target: ${userEmail}`);
+
+  // Mengirim menggunakan konfigurasi Service ID dan Template ID asli milikmu
+  emailjs.send('service_d76j5wp', 'template_e04to49', templateParams)
+    .then(function(response) {
+      console.log(`Email ${labelWaktu} BERHASIL dikirim via EmailJS!`, response.status, response.text);
+      showToast(`🚀 Email pengingat (${labelWaktu}) otomatis terkirim!`, 'success');
+    }, function(error) {
+      console.error(`Email ${labelWaktu} GAGAL dikirim via EmailJS...`, error);
+    });
+}
+
 // Task Management Core Functions
-// ==========================================================================
 function addTask(text, dueDate, dueTime) {
   const isDuplicate = tasks.some(t => t.text.toLowerCase() === text.toLowerCase() && !t.completed);
   if (isDuplicate) {
@@ -207,7 +209,8 @@ function addTask(text, dueDate, dueTime) {
     createdAt: Date.now(),
     dueDate: dueDate || null,
     dueTime: dueTime || null, 
-    reminderActive: false
+    reminderActive: false,
+    emailsSent: { h1: false, h2h: false, m15: false } // Inisialisasi default tracker
   };
 
   tasks.unshift(newTask);
@@ -315,9 +318,7 @@ function clearCompletedTasks() {
   }
 }
 
-// ==========================================================================
 // Rendering Utilities & Engine
-// ==========================================================================
 function renderTasks() {
   taskList.innerHTML = '';
 
@@ -367,9 +368,9 @@ function renderTasks() {
 
 function formatReadableDate(dateString, timeString) {
   if (!dateString) return '';
-  const options = { month: 'short', day: 'numeric' };
+  const options = { month: 'short', day: 'numeric', year: 'numeric' };
   const dateFormatted = new Date(dateString).toLocaleDateString('en-US', options);
-  const timeFormatted = timeString ? ` - ${timeString}` : '';
+  const timeFormatted = timeString ? ` pukul ${timeString}` : '';
   return `${dateFormatted}${timeFormatted}`;
 }
 
@@ -420,7 +421,7 @@ function createTaskElement(task) {
   const actionsDiv = document.createElement('div');
   actionsDiv.className = 'task-actions';
 
-  // 1. Tombol Lonceng Pengingat
+  // tombol lonceng pengingat
   const bellBtn = document.createElement('button');
   bellBtn.className = `action-btn bell-btn ${task.reminderActive ? 'active-bell' : ''}`;
   bellBtn.ariaLabel = 'Set Email Reminder';
@@ -431,7 +432,7 @@ function createTaskElement(task) {
     </svg>`;
   bellBtn.addEventListener('click', () => toggleReminder(task.id));
 
-  // 2. Tombol Edit Manual
+  // tombol buat edit tugas
   const editBtn = document.createElement('button');
   editBtn.className = 'action-btn edit-btn';
   editBtn.ariaLabel = 'Edit task';
@@ -443,7 +444,7 @@ function createTaskElement(task) {
     bellBtn.style.display = 'none';
   }
 
-  // 3. Tombol Hapus Tugas
+  // tombol buat hapus tugas
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'action-btn delete-btn';
   deleteBtn.ariaLabel = 'Delete task';
@@ -466,9 +467,7 @@ function updateStats() {
   itemsLeftCount.textContent = `${activeCount} item${activeCount === 1 ? '' : 's'} remaining`;
 }
 
-// ==========================================================================
 // Theme, Email & Storage Utilities
-// ==========================================================================
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
