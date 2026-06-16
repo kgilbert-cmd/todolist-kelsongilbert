@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus To-Do with Reminders</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <main class="todo-section">
+      <header class="app-header">
+        <div class="header-logo">
+          <h1>Hi, Kelson Gilbert</h1>
+          <p id="user-email" class="email-clickable">📧 Reminders destination: <strong>kelson.gilbert@gmail.com</strong></p>
+        </div>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        </button>
+      </header>
+
+      <form id="task-form" class="task-form-container">
+        <div class="input-main-row">
+          <input type="text" id="task-input" placeholder="Create a new task..." maxlength="120" required>
+          <button type="submit" class="submit-btn">Add</button>
+        </div>
+        <div class="input-meta-row">
+          <div class="meta-field">
+            <label for="task-date">📅 Date:</label>
+            <input type="date" id="task-date">
+          </div>
+          <div class="meta-field">
+            <label for="task-time">⏰ Time:</label>
+            <input type="time" id="task-time">
+          </div>
+        </div>
+      </form>
+
+      <div class="controls-bar">
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="active">Active</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+        <div class="sort-group">
+          <select id="task-sort" class="sort-dropdown">
+            <option value="latest">Sort by: Newest</option>
+            <option value="oldest">Sort by: Oldest</option>
+            <option value="duedate">Sort by: Due Date</option>
+          </select>
+        </div>
+      </div>
+
+      <ul id="task-list" class="task-list"></ul>
+
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">✓</div>
+        <h3>All caught up</h3>
+        <p>Enjoy your day, or add something new to achieve.</p>
+      </div>
+
+      <footer class="app-footer">
+        <span id="items-left">0 items remaining</span>
+        <button id="clear-completed" class="clear-btn">Clear Completed</button>
+      </footer>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
