@@ -1,38 +1,43 @@
 /* ==========================================================================
-   Design Tokens & Root Variables
+   Design Tokens & Root Variables (Base: Hitam Abu-Abu Aesthetic)
    ========================================================================== */
 :root {
   --font-main: 'Plus Jakarta Sans', sans-serif;
   
-  --bg-app: #f8fafc;
-  --bg-card: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --accent-bell: #eab308;
-  --danger: #ef4444;
-  --success: #22c55e;
+  /* Palet Utama - Hitam Abu-abu */
+  --bg-app: #09090b;          /* Hitam pekat untuk background aplikasi luar */
+  --bg-card: #18181b;         /* Abu-abu gelap solid untuk kontainer utama & kartu */
+  --text-main: #f4f4f5;       /* Putih abu-abu terang agar teks utama kontras & nyaman dibaca */
+  --text-muted: #71717a;      /* Abu-abu redup untuk sub-teks / elemen sekunder */
+  --border-color: #27272a;    /* Garis pembatas abu-abu tipis yang elegan */
   
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+  /* Warna Aksen & Status */
+  --primary: #a1a1aa;         /* Abu-abu terang solid sebagai pengganti warna indigo */
+  --primary-hover: #e4e4e7;   /* Efek hover ke putih keabu-an */
+  --accent-bell: #f59e0b;     /* Emas hangat untuk lonceng aktif */
+  --danger: #ef4444;          /* Merah untuk tombol hapus & overdue */
+  --success: #10b981;         /* Hijau emerald untuk tugas selesai */
+  
+  /* Efek Bayangan Kamfles di Latar Gelap */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.6);
   --radius: 12px;
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[data-theme="dark"] {
-  --bg-app: #0f172a;
-  --bg-card: #1e293b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: #334155;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4);
+/* Dukungan data-theme jika ingin mempertahankan fitur toggle */
+[data-theme="light"] {
+  --bg-app: #f4f4f5;
+  --bg-card: #ffffff;
+  --text-main: #09090b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --primary: #27272a;
+  --primary-hover: #09090b;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
 }
 
 /* ==========================================================================
@@ -57,10 +62,12 @@ body {
 .app-container {
   display: flex;
   width: 100%;
-  max-width: 750px; /* Dipersempit agar proporsional karena panel kanan sudah hilang */
+  max-width: 750px; 
   min-height: 100vh;
   background-color: var(--bg-card);
   box-shadow: var(--shadow-lg);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .todo-section {
@@ -86,6 +93,7 @@ body {
   font-weight: 700;
   letter-spacing: -0.5px;
   margin-bottom: 4px;
+  color: var(--text-main);
 }
 
 .email-clickable {
@@ -97,7 +105,7 @@ body {
 }
 
 .email-clickable:hover {
-  color: var(--primary);
+  color: var(--text-main);
   transform: translateY(-1px);
 }
 
@@ -149,13 +157,13 @@ body {
 }
 
 .input-main-row input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  border-color: var(--text-muted);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
 }
 
 .submit-btn {
-  background-color: var(--primary);
-  color: #ffffff;
+  background-color: var(--text-main);
+  color: var(--bg-app);
   border: none;
   padding: 0 20px;
   border-radius: 8px;
@@ -194,6 +202,10 @@ body {
   outline: none;
 }
 
+.meta-field input::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Mencerahkan icon kalender/jam di latar gelap */
+}
+
 /* ==========================================================================
    Controls Bar (Filter & Dropdown)
    ========================================================================== */
@@ -228,13 +240,15 @@ body {
 
 .filter-btn.active {
   font-weight: 600;
-  color: var(--primary);
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-color);
 }
 
+/* Dropdown */
 .sort-dropdown {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  color: var(--text-muted);
+  color: var(--text-main);
   padding: 6px 12px;
   font-size: 13px;
   border-radius: 6px;
@@ -306,13 +320,13 @@ body {
 .checkmark svg {
   width: 12px;
   height: 12px;
-  color: #ffffff;
+  color: var(--bg-app);
   display: none;
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: var(--success);
-  border-color: var(--success);
+  background-color: var(--text-main);
+  border-color: var(--text-main);
 }
 
 .checkbox-container input:checked ~ .checkmark svg {
@@ -352,8 +366,9 @@ body {
 }
 
 .due-date-badge.overdue {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.15);
   color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* Action Control Buttons Inside Row */
@@ -382,7 +397,7 @@ body {
 }
 
 .bell-btn:hover, .bell-btn.active-bell { color: var(--accent-bell); }
-.edit-btn:hover { color: var(--primary); }
+.edit-btn:hover { color: var(--primary-hover); }
 .delete-btn:hover { color: var(--danger); }
 
 /* Edit Input Inside List Item */
@@ -391,9 +406,9 @@ body {
   padding: 4px 8px;
   font-family: var(--font-main);
   font-size: 14px;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--text-muted);
   border-radius: 4px;
-  background: var(--bg-card);
+  background: var(--bg-app);
   color: var(--text-main);
   outline: none;
 }
@@ -455,19 +470,20 @@ body {
 }
 
 .toast {
-  background-color: #1e293b;
+  background-color: #27272a;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   box-shadow: var(--shadow-lg);
+  border: 1px solid #3f3f46;
   animation: toastIn 0.25s ease forwards;
 }
 
-.toast-danger { background-color: var(--danger); }
-.toast-success { background-color: var(--success); }
-.toast-info { background-color: #0284c7; }
+.toast-danger { background-color: rgba(239, 68, 68, 0.9); border-color: var(--danger); }
+.toast-success { background-color: rgba(16, 185, 129, 0.9); border-color: var(--success); }
+.toast-info { background-color: #27272a; }
 
 .toast-out { animation: toastOut 0.25s ease forwards; }
 
