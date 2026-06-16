@@ -1,10 +1,8 @@
-// Application State & Constants
 let tasks = [];
 let currentFilter = 'all';
 let currentSort = 'latest';
 let userEmail = 'enteryouremailhere@gmail.com'; 
 
-// DOM Elements
 const taskForm = document.getElementById('task-form');
 const taskInput = document.getElementById('task-input');
 const taskDate = document.getElementById('task-date');
@@ -19,7 +17,6 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 const toastContainer = document.getElementById('toast-container');
 const emailDisplay = document.getElementById('user-email');
 
-// Initialisation
 document.addEventListener('DOMContentLoaded', () => {
   loadTasksFromLocalStorage();
   loadEmailFromLocalStorage();
@@ -63,7 +60,6 @@ function renderEmailDisplay() {
   }
 }
 
-// Event Listeners Setup
 function setupEventListeners() {
   taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -99,7 +95,6 @@ function setupEventListeners() {
   if (emailDisplay) emailDisplay.addEventListener('click', changeEmail);
 }
 
-// Logika Sistem Lonceng Otomatis Nyata via EmailJS
 function toggleReminder(taskId) {
   tasks = tasks.map(task => {
     if (task.id === taskId) {
@@ -111,7 +106,6 @@ function toggleReminder(taskId) {
           return task;
         }
         
-        // Membuat objek tracker agar sistem tahu email mana saja yang sudah dikirim (mencegah spam berulang)
         task.emailsSent = { h1: false, h2h: false, m15: false };
         showToast(`🔔 Pengingat Otomatis Aktif! Menunggu jadwal pengiriman ke ${userEmail}`, 'success');
       } else {
@@ -126,36 +120,30 @@ function toggleReminder(taskId) {
   renderTasks();
 }
 
-// ENGINE DETEKSI WAKTU (Mengecek H-1 Hari, H-2 Jam, dan H-15 Menit secara Riil)
 function cekJadwalPengingatOtomatis() {
   const sekarang = new Date();
 
   tasks = tasks.map(task => {
-    // Jalankan pengecekan jika lonceng aktif, tugas belum selesai, dan data waktu lengkap
     if (task.reminderActive && !task.completed && task.dueDate && task.dueTime) {
       
       const waktuTarget = new Date(`${task.dueDate}T${task.dueTime}`);
       const selisihMilidetik = waktuTarget - sekarang;
       const selisihMenit = Math.floor(selisihMilidetik / (1000 * 60));
 
-      // Inisialisasi objek tracker jika belum terdefinisi secara aman
       if (!task.emailsSent) {
         task.emailsSent = { h1: false, h2h: false, m15: false };
       }
 
-      // 1. ATURAN H-1 HARI (Dikirim jika waktu tersisa berada di rentang 23 hingga 24 jam)
       if (selisihMenit <= 1440 && selisihMenit > 1380 && !task.emailsSent.h1) {
         task.emailsSent.h1 = true;
         kirimEmailPengingatNyata(task, "H-1 Hari");
       }
       
-      // 2. ATURAN H-2 JAM (Dikirim jika waktu tersisa berada di rentang 110 hingga 120 menit)
       else if (selisihMenit <= 120 && selisihMenit > 110 && !task.emailsSent.h2h) {
         task.emailsSent.h2h = true;
         kirimEmailPengingatNyata(task, "H-2 Jam");
       }
       
-      // 3. ATURAN H-15 MENIT (Dikirim jika waktu tersisa di bawah 15 menit dan belum lewat batas)
       else if (selisihMenit <= 15 && selisihMenit > 0 && !task.emailsSent.m15) {
         task.emailsSent.m15 = true;
         kirimEmailPengingatNyata(task, "H-15 Menit [URGENT]");
@@ -164,18 +152,14 @@ function cekJadwalPengingatOtomatis() {
     return task;
   });
 
-  // Sinkronisasi status tracker ke LocalStorage agar tidak reset saat browser di-refresh
   saveTasksToLocalStorage();
 }
 
-// Menjalankan pengecekan otomatis setiap 60 detik (1 menit)
 setInterval(cekJadwalPengingatOtomatis, 60000);
 
-// FUNGSI UTAMA MENEMBAK API EMAILJS KELSON GILBERT
 function kirimEmailPengingatNyata(task, labelWaktu) {
   const batasWaktu = `${formatReadableDate(task.dueDate, task.dueTime)}`;
 
-  // Menambahkan informasi rentang waktu secara dinamis pada parameter judul tugas
   const templateParams = {
     task_title: `${task.text} (${labelWaktu})`,
     task_deadline: batasWaktu,
@@ -184,7 +168,6 @@ function kirimEmailPengingatNyata(task, labelWaktu) {
 
   console.log(`[MAIL SYSTEM LOG] Otomatisasi terpicu [${labelWaktu}] untuk target: ${userEmail}`);
 
-  // Mengirim menggunakan konfigurasi Service ID dan Template ID asli milikmu
   emailjs.send('service_d76j5wp', 'template_e04to49', templateParams)
     .then(function(response) {
       console.log(`Email ${labelWaktu} BERHASIL dikirim via EmailJS!`, response.status, response.text);
@@ -194,7 +177,6 @@ function kirimEmailPengingatNyata(task, labelWaktu) {
     });
 }
 
-// Task Management Core Functions
 function addTask(text, dueDate, dueTime) {
   const isDuplicate = tasks.some(t => t.text.toLowerCase() === text.toLowerCase() && !t.completed);
   if (isDuplicate) {
@@ -210,7 +192,7 @@ function addTask(text, dueDate, dueTime) {
     dueDate: dueDate || null,
     dueTime: dueTime || null, 
     reminderActive: false,
-    emailsSent: { h1: false, h2h: false, m15: false } // Inisialisasi default tracker
+    emailsSent: { h1: false, h2h: false, m15: false } 
   };
 
   tasks.unshift(newTask);
@@ -318,7 +300,6 @@ function clearCompletedTasks() {
   }
 }
 
-// Rendering Utilities & Engine
 function renderTasks() {
   taskList.innerHTML = '';
 
@@ -379,7 +360,6 @@ function createTaskElement(task) {
   li.className = `task-item ${task.completed ? 'completed' : ''}`;
   li.setAttribute('data-id', task.id);
 
-  // Checkbox
   const checkboxLabel = document.createElement('label');
   checkboxLabel.className = 'checkbox-container';
   const checkbox = document.createElement('input');
@@ -392,7 +372,6 @@ function createTaskElement(task) {
   checkboxLabel.appendChild(checkbox);
   checkboxLabel.appendChild(checkmarkSpan);
 
-  // Content Block
   const contentBlock = document.createElement('div');
   contentBlock.className = 'task-content-block';
   const contentSpan = document.createElement('span');
@@ -417,11 +396,9 @@ function createTaskElement(task) {
     contentBlock.appendChild(dateBadge);
   }
 
-  // Actions Panel Group (Lonceng, Edit, Delete)
   const actionsDiv = document.createElement('div');
   actionsDiv.className = 'task-actions';
 
-  // tombol lonceng pengingat
   const bellBtn = document.createElement('button');
   bellBtn.className = `action-btn bell-btn ${task.reminderActive ? 'active-bell' : ''}`;
   bellBtn.ariaLabel = 'Set Email Reminder';
@@ -432,7 +409,6 @@ function createTaskElement(task) {
     </svg>`;
   bellBtn.addEventListener('click', () => toggleReminder(task.id));
 
-  // tombol buat edit tugas
   const editBtn = document.createElement('button');
   editBtn.className = 'action-btn edit-btn';
   editBtn.ariaLabel = 'Edit task';
@@ -444,7 +420,6 @@ function createTaskElement(task) {
     bellBtn.style.display = 'none';
   }
 
-  // tombol buat hapus tugas
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'action-btn delete-btn';
   deleteBtn.ariaLabel = 'Delete task';
@@ -467,7 +442,6 @@ function updateStats() {
   itemsLeftCount.textContent = `${activeCount} item${activeCount === 1 ? '' : 's'} remaining`;
 }
 
-// Theme, Email & Storage Utilities
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';

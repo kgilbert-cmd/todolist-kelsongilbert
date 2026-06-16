@@ -1,24 +1,18 @@
-/* ==========================================================================
-   Design Tokens & Root Variables (Base: Hitam Abu-Abu Aesthetic)
-   ========================================================================== */
 :root {
   --font-main: 'Plus Jakarta Sans', sans-serif;
   
-  /* Palet Utama - Hitam Abu-abu */
-  --bg-app: #09090b;          /* Hitam pekat untuk background aplikasi luar */
-  --bg-card: #18181b;         /* Abu-abu gelap solid untuk kontainer utama & kartu */
-  --text-main: #f4f4f5;       /* Putih abu-abu terang agar teks utama kontras & nyaman dibaca */
-  --text-muted: #71717a;      /* Abu-abu redup untuk sub-teks / elemen sekunder */
-  --border-color: #27272a;    /* Garis pembatas abu-abu tipis yang elegan */
+  --bg-app: #09090b;          
+  --bg-card: #18181b;        
+  --text-main: #f4f4f5;       
+  --text-muted: #71717a;      
+  --border-color: #27272a;   
   
-  /* Warna Aksen & Status */
-  --primary: #a1a1aa;         /* Abu-abu terang solid sebagai pengganti warna indigo */
-  --primary-hover: #e4e4e7;   /* Efek hover ke putih keabu-an */
-  --accent-bell: #f59e0b;     /* Emas hangat untuk lonceng aktif */
-  --danger: #ef4444;          /* Merah untuk tombol hapus & overdue */
-  --success: #10b981;         /* Hijau emerald untuk tugas selesai */
+  --primary: #a1a1aa;         
+  --primary-hover: #e4e4e7; 
+  --accent-bell: #f59e0b; 
+  --danger: #ef4444;         
+  --success: #10b981;      
   
-  /* Efek Bayangan Kamfles di Latar Gelap */
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
   --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.6);
@@ -26,7 +20,6 @@
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dukungan data-theme jika ingin mempertahankan fitur toggle */
 [data-theme="light"] {
   --bg-app: #f4f4f5;
   --bg-card: #ffffff;
@@ -40,9 +33,6 @@
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
 }
 
-/* ==========================================================================
-   Global Reset & Layout Engine
-   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -78,9 +68,6 @@ body {
   flex-direction: column;
 }
 
-/* ==========================================================================
-   Header & Email Interactive Row
-   ========================================================================== */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -124,9 +111,6 @@ body {
   border-color: var(--text-muted);
 }
 
-/* ==========================================================================
-   Form Input Pendaftaran Tugas Baru
-   ========================================================================== */
 .task-form-container {
   background-color: var(--bg-app);
   border: 1px solid var(--border-color);
@@ -203,12 +187,9 @@ body {
 }
 
 .meta-field input::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Mencerahkan icon kalender/jam di latar gelap */
+  filter: invert(1); 
 }
 
-/* ==========================================================================
-   Controls Bar (Filter & Dropdown)
-   ========================================================================== */
 .controls-bar {
   display: flex;
   justify-content: space-between;
@@ -244,7 +225,6 @@ body {
   border: 1px solid var(--border-color);
 }
 
-/* Dropdown */
 .sort-dropdown {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -257,9 +237,6 @@ body {
   cursor: pointer;
 }
 
-/* ==========================================================================
-   List Item Engine & Action Buttons Group
-   ========================================================================== */
 .task-list {
   list-style: none;
   display: flex;
@@ -284,7 +261,6 @@ body {
   border-color: var(--text-muted);
 }
 
-/* Checkbox Customization */
 .checkbox-container {
   display: block;
   position: relative;
@@ -333,7 +309,6 @@ body {
   display: block;
 }
 
-/* Text Content & Badges */
 .task-content-block {
   flex: 1;
   display: flex;
@@ -371,7 +346,6 @@ body {
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-/* Action Control Buttons Inside Row */
 .task-actions {
   display: flex;
   gap: 4px;
@@ -400,7 +374,6 @@ body {
 .edit-btn:hover { color: var(--primary-hover); }
 .delete-btn:hover { color: var(--danger); }
 
-/* Edit Input Inside List Item */
 .edit-input {
   width: 100%;
   padding: 4px 8px;
@@ -413,9 +386,6 @@ body {
   outline: none;
 }
 
-/* ==========================================================================
-   Footer App Stats Block
-   ========================================================================== */
 .app-footer {
   display: flex;
   justify-content: space-between;
@@ -439,9 +409,6 @@ body {
   color: var(--danger);
 }
 
-/* ==========================================================================
-   Utilities Components (Toast, Animations & Core Structural States)
-   ========================================================================== */
 .hidden {
   display: none !important;
 }
@@ -458,7 +425,6 @@ body {
   color: var(--border-color);
 }
 
-/* Toast Notification Engine */
 .toast-container {
   position: fixed;
   bottom: 24px;
@@ -487,7 +453,6 @@ body {
 
 .toast-out { animation: toastOut 0.25s ease forwards; }
 
-/* Keyframe Animations */
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -500,7 +465,6 @@ body {
   to { transform: translateY(-20px); opacity: 0; }
 }
 
-/* Deleting Animation */
 .task-item.deleting {
   animation: slideOut 0.25s ease forwards;
 }
